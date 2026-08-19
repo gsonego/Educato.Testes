@@ -19,6 +19,10 @@ async function seedCursos(db, escolas) {
       const template = CURSO_TEMPLATES[chave];
       const id = faker.string.uuid();
 
+      console.log(
+        `  - Inserindo curso ${template.titulo} (${template.sigla}) para escola ${escola.nomeFantasia}...`,
+      );
+
       await db.run(
         `INSERT INTO Curso
           (Id, EscolaId, Sigla, Titulo, TipoAvaliacao, QtdeSemanas, EmissaoHistorico, DuracaoAula, Inativo, ModoControlePresenca, Ordem)

@@ -28,14 +28,21 @@ async function main() {
   await limparBanco(db);
 
   await seedEscolas(db, ESCOLAS);
+
   const usuariosPorEscola = await seedUsuarios(db, ESCOLAS);
 
   const cursosPorEscola = await seedCursos(db, ESCOLAS);
+
   const anosEscolaresPorEscola = await seedAnosEscolares(db, cursosPorEscola);
+
+  await seedAnosLetivos(db, ESCOLAS);
+
   await seedModulos(db, ESCOLAS);
 
   const faixasPorEscola = await seedFaixasHorarias(db, ESCOLAS);
+
   await seedPeriodos(db, faixasPorEscola);
+
   const locaisPorEscola = await seedLocais(db, ESCOLAS, anosEscolaresPorEscola);
 
   const modeloAvaliacaoPorEscola = await seedModeloAvaliacao(db, ESCOLAS);
@@ -50,6 +57,7 @@ async function main() {
   );
 
   const disciplinasPorEscola = await seedDisciplinas(db, ESCOLAS);
+
   await seedTurmaDisciplinas(
     db,
     ESCOLAS,
@@ -66,9 +74,8 @@ async function main() {
     turmasPorEscola,
     anosEscolaresPorEscola,
   );
-  await seedMatriculas(db, ESCOLAS, turmasPorEscola, alunosPorTurma);
 
-  await seedAnosLetivos(db, ESCOLAS);
+  await seedMatriculas(db, ESCOLAS, turmasPorEscola, alunosPorTurma);
 
   console.log('--------------------------');
   console.log('*** Banco de dados de testes pronto!');

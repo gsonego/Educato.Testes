@@ -1,10 +1,10 @@
 const { faker } = require('./faker');
 const { Sexo, SituacaoMatricula } = require('./enums');
-const { ANO_LETIVO_ATUAL } = require('./config');
+const { ANO_LETIVO_ATUAL, FOTOS_MENINOS, FOTOS_MENINAS } = require('./config');
 
 const MIN_ALUNOS_POR_TURMA = 5;
 const MAX_ALUNOS_POR_TURMA = 10;
-const PERCENTUAL_MATRICULADO = 0.9;
+const PERCENTUAL_TRANSFERIDOS = 0.1; // 10% dos alunos transferidos
 
 function dataNascimentoParaTurma(indiceAnoEscolar) {
   // Idade aproximada cresce com o índice do ano escolar (0 = Berçário, ...).
@@ -39,28 +39,56 @@ async function seedAlunos(
 
       for (let j = 0; j < quantidade; j++) {
         const id = alunoId++;
+
         const sexo = faker.helpers.arrayElement([
           Sexo.Masculino,
           Sexo.Feminino,
         ]);
-        const nome = faker.person.fullName({
-          sex: sexo === Sexo.Masculino ? 'male' : 'female',
-        });
+
+        const sexoStr = sexo === Sexo.Masculino ? 'male' : 'female';
+
+        console.log(
+          `  - Criando aluno ${id} (${sexoStr}) para a turma ${turma.sigla} da escola ${escola.nomeFantasia}...`,
+        );
+
+        const nome = faker.person.firstName(sexoStr);
+        const sobrenome = faker.person.lastName(sexoStr);
+        const nomeCompleto = `${nome} ${sobrenome}`;
+
         const dataNascimento = dataNascimentoParaTurma(i);
+
         const ra = String(raSequencial++).padStart(6, '0');
+
         const emailBase = faker.internet
           .username()
           .toLowerCase()
           .replace(/[^a-z0-9._-]/g, '');
+
         const email = `${emailBase}.aluno${id}@example.test`;
 
+        // Escolhe foto de acordo com o sexo do aluno (fotos são fictícias).
+        const foto = obterFotoAleatoria(sexo);
+
         await db.run(
-          `INSERT INTO Aluno (AlunoId, EscolaId, Nome, DataNascimento, RA, Sexo, Email, Inativo)
-           VALUES (?, ?, ?, ?, ?, ?, ?, 0)`,
-          [id, escola.escolaId, nome, dataNascimento, ra, sexo, email],
+          `INSERT INTO Aluno (AlunoId, EscolaId, Nome, DataNascimento, RA, Sexo, Email, Foto, Inativo)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)`,
+          [
+            id,
+            escola.escolaId,
+            nomeCompleto,
+            dataNascimento,
+            ra,
+            sexo,
+            email,
+            foto,
+          ],
         );
 
-        criados.push({ alunoId: id, nome, escolaId: escola.escolaId });
+        criados.push({
+          alunoId: id,
+          nome: nomeCompleto,
+          escolaId: escola.escolaId,
+        });
       }
 
       alunosPorTurma.set(turma.id, criados);
@@ -68,6 +96,11 @@ async function seedAlunos(
   }
 
   return alunosPorTurma;
+}
+
+function obterFotoAleatoria(sexo) {
+  const fotos = sexo === Sexo.Masculino ? FOTOS_MENINOS : FOTOS_MENINAS;
+  return faker.helpers.arrayElement(fotos);
 }
 
 // Pelo menos 90% dos alunos de cada turma recebem matrícula ativa.
@@ -81,13 +114,13 @@ async function seedMatriculas(db, escolas, turmasPorEscola, alunosPorTurma) {
 
     for (const turma of turmas) {
       const alunos = alunosPorTurma.get(turma.id) ?? [];
-      const quantidadeMatriculada = Math.ceil(
-        alunos.length * PERCENTUAL_MATRICULADO,
-      );
 
-      for (let numero = 1; numero <= quantidadeMatriculada; numero++) {
+      for (let numero = 1; numero <= alunos.length; numero++) {
         const aluno = alunos[numero - 1];
         const id = faker.string.uuid();
+
+        const situacaoMatricula =
+          Math.random() > PERCENTUAL_TRANSFERIDOS ? 1 : 2;
 
         await db.run(
           `INSERT INTO Matricula (Id, TurmaId, AlunoId, Numero, DataMatricula, Situacao, DataSituacao)
@@ -98,7 +131,9 @@ async function seedMatriculas(db, escolas, turmasPorEscola, alunosPorTurma) {
             aluno.alunoId,
             numero,
             dataMatricula,
-            SituacaoMatricula.Ativo,
+            situacaoMatricula == 1
+              ? SituacaoMatricula.Ativo
+              : SituacaoMatricula.Transferido,
             dataMatricula,
           ],
         );

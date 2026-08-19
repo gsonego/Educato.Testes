@@ -2,6 +2,8 @@ async function seedEscolas(db, escolas) {
   console.log('* Inserindo escolas...');
 
   for (const escola of escolas) {
+    console.log(`  - Inserindo escola ${escola.nomeFantasia}...`);
+
     await db.run(
       `INSERT INTO Escola
         (EscolaId, RazaoSocial, NomeFantasia, Cnpj, Cidade, Estado, Email, Inativo, Plano)
