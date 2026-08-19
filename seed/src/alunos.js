@@ -2,8 +2,8 @@ const { faker } = require('./faker');
 const { Sexo, SituacaoMatricula } = require('./enums');
 const { ANO_LETIVO_ATUAL, FOTOS_MENINOS, FOTOS_MENINAS } = require('./config');
 
-const MIN_ALUNOS_POR_TURMA = 5;
-const MAX_ALUNOS_POR_TURMA = 10;
+const MIN_ALUNOS_POR_TURMA = 8;
+const MAX_ALUNOS_POR_TURMA = 15;
 const PERCENTUAL_TRANSFERIDOS = 0.1; // 10% dos alunos transferidos
 
 function dataNascimentoParaTurma(indiceAnoEscolar) {

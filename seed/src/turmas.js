@@ -47,9 +47,10 @@ async function seedTurmas(
       const faixa = faixas[index % faixas.length];
       const turno =
         faixa.titulo === 'Vespertino' ? Turno.Vespertino : Turno.Matutino;
-      const formaAvaliacao = escola.comModeloAvaliacao
-        ? FormaAvaliacao.Conceito
-        : FormaAvaliacao.Indefinido;
+
+      const formaAvaliacao =
+        anoEscolar.formaAvaliacao || FormaAvaliacao.Indefinido;
+
       const cor = CORES[index % CORES.length];
       const sigla = `${anoEscolar.sigla}A`;
 

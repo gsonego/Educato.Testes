@@ -87,6 +87,7 @@ async function seedAnosEscolares(db, cursosPorEscola) {
           id,
           sigla: ano.sigla,
           titulo: ano.titulo,
+          formaAvaliacao: ano.formaAvaliacao || FormaAvaliacao.Nota,
           cursoId: curso.id,
           cursoSigla: curso.sigla,
           escolaId,
