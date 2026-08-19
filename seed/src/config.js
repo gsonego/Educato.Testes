@@ -1,4 +1,10 @@
-const { PlanoEscola, Perfil } = require('./enums');
+const {
+  EmissaoHistorico,
+  FormaAvaliacao,
+  ModoControlePresenca,
+  Perfil,
+  PlanoEscola,
+} = require('./enums');
 
 const ANO_LETIVO_ATUAL = new Date().getFullYear();
 
@@ -7,33 +13,55 @@ const CURSO_TEMPLATES = {
   EI: {
     sigla: 'EI',
     titulo: 'Educação Infantil',
+    modoControlePresenca: ModoControlePresenca.PresencaDiaria,
+    emissaoHistorico: EmissaoHistorico.Nao,
     anos: [
-      { sigla: 'BER', titulo: 'Berçário' },
-      { sigla: 'MAT1', titulo: 'Maternal 1' },
-      { sigla: 'MAT2', titulo: 'Maternal 2' },
-      { sigla: 'PRE1', titulo: 'Pré 1' },
-      { sigla: 'PRE2', titulo: 'Pré 2' },
+      {
+        sigla: 'BER',
+        titulo: 'Berçário',
+        formaAvaliacao: FormaAvaliacao.Conceito,
+      },
+      {
+        sigla: 'MAT1',
+        titulo: 'Maternal 1',
+        formaAvaliacao: FormaAvaliacao.Conceito,
+      },
+      {
+        sigla: 'MAT2',
+        titulo: 'Maternal 2',
+        formaAvaliacao: FormaAvaliacao.Conceito,
+      },
+      {
+        sigla: 'PRE1',
+        titulo: 'Pré 1',
+        formaAvaliacao: FormaAvaliacao.Conceito,
+      },
+      {
+        sigla: 'PRE2',
+        titulo: 'Pré 2',
+        formaAvaliacao: FormaAvaliacao.Conceito,
+      },
     ],
   },
   EF1: {
     sigla: 'EF1',
     titulo: 'Ensino Fundamental 1',
     anos: [
-      { sigla: '1EF', titulo: '1º Ano' },
-      { sigla: '2EF', titulo: '2º Ano' },
-      { sigla: '3EF', titulo: '3º Ano' },
-      { sigla: '4EF', titulo: '4º Ano' },
-      { sigla: '5EF', titulo: '5º Ano' },
+      { sigla: '1EF', titulo: '1º Ano', aulasSemanais: 25 },
+      { sigla: '2EF', titulo: '2º Ano', aulasSemanais: 25 },
+      { sigla: '3EF', titulo: '3º Ano', aulasSemanais: 25 },
+      { sigla: '4EF', titulo: '4º Ano', aulasSemanais: 25 },
+      { sigla: '5EF', titulo: '5º Ano', aulasSemanais: 25 },
     ],
   },
   EF2: {
     sigla: 'EF2',
     titulo: 'Ensino Fundamental 2',
     anos: [
-      { sigla: '6EF', titulo: '6º Ano' },
-      { sigla: '7EF', titulo: '7º Ano' },
-      { sigla: '8EF', titulo: '8º Ano' },
-      { sigla: '9EF', titulo: '9º Ano' },
+      { sigla: '6EF', titulo: '6º Ano', aulasSemanais: 30 },
+      { sigla: '7EF', titulo: '7º Ano', aulasSemanais: 30 },
+      { sigla: '8EF', titulo: '8º Ano', aulasSemanais: 30 },
+      { sigla: '9EF', titulo: '9º Ano', aulasSemanais: 30 },
     ],
   },
 };
@@ -65,6 +93,7 @@ const ESCOLAS = [
     cursos: ['EI', 'EF1'],
     numDisciplinas: 5,
     numDeliberacoes: 10,
+    qtdeAnosLetivos: 4,
     comModeloAvaliacao: false,
     usuarios: [
       {
@@ -99,6 +128,7 @@ const ESCOLAS = [
     cursos: ['EI', 'EF1', 'EF2'],
     numDisciplinas: 10,
     numDeliberacoes: 20,
+    qtdeAnosLetivos: 2,
     comModeloAvaliacao: true,
     usuarios: [
       {
@@ -164,6 +194,7 @@ const ESCOLAS = [
     cursos: [],
     numDisciplinas: 0,
     numDeliberacoes: 0,
+    qtdeAnosLetivos: 0,
     comModeloAvaliacao: false,
     usuarios: [
       {

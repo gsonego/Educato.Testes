@@ -41,7 +41,7 @@ const TABELAS = [
 ];
 
 async function limparBanco(db) {
-  console.log('* Limpando tabelas...');
+  console.log('* Limpando tabelas...☠️');
 
   await db.run('SET FOREIGN_KEY_CHECKS = 0');
 
