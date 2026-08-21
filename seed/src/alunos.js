@@ -1,10 +1,15 @@
-const { faker } = require('./faker');
-const { Sexo, SituacaoMatricula } = require('./enums');
+const { faker, gerarEndereco } = require('./faker');
+const { Sexo, SituacaoMatricula, Parentesco } = require('./enums');
 const { ANO_LETIVO_ATUAL, FOTOS_MENINOS, FOTOS_MENINAS } = require('./config');
 
 const MIN_ALUNOS_POR_TURMA = 8;
 const MAX_ALUNOS_POR_TURMA = 15;
 const PERCENTUAL_TRANSFERIDOS = 0.1; // 10% dos alunos transferidos
+const PERCENTUAL_SEM_TELEFONE = 0.15; // 15% dos responsáveis sem telefone cadastrado
+const PERCENTUAL_SEM_EMAIL = 0.15; // 15% dos responsáveis sem e-mail cadastrado
+
+// Segundo/terceiro responsável (além da mãe, sempre presente) sorteados sem repetir parentesco.
+const OUTROS_PARENTESCOS = [Parentesco.Pai, Parentesco.Avo, Parentesco.Tia];
 
 function dataNascimentoParaTurma(indiceAnoEscolar) {
   // Idade aproximada cresce com o índice do ano escolar (0 = Berçário, ...).
@@ -14,12 +19,7 @@ function dataNascimentoParaTurma(indiceAnoEscolar) {
 }
 
 // 5 a 10 alunos por turma, com nomes e e-mails aleatórios (domínio sempre fictício).
-async function seedAlunos(
-  db,
-  escolas,
-  turmasPorEscola,
-  anosEscolaresPorEscola,
-) {
+async function seedAlunos(db, escolas, turmasPorEscola) {
   console.log('* Inserindo alunos...');
 
   const alunosPorTurma = new Map();
@@ -59,6 +59,11 @@ async function seedAlunos(
 
         const ra = String(raSequencial++).padStart(6, '0');
 
+        const nacionalidade = 'Brasileiro';
+        const naturalidade = faker.location.city();
+
+        const { endereco, cidade, uf, cep } = gerarEndereco();
+
         const emailBase = faker.internet
           .username()
           .toLowerCase()
@@ -70,8 +75,10 @@ async function seedAlunos(
         const foto = obterFotoAleatoria(sexo);
 
         await db.run(
-          `INSERT INTO Aluno (AlunoId, EscolaId, Nome, DataNascimento, RA, Sexo, Email, Foto, Inativo)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)`,
+          `INSERT INTO Aluno (AlunoId, EscolaId, Nome, DataNascimento, RA, Sexo, 
+                       Naturalidade, Nacionalidade, Endereco, Cidade, UF, CEP, 
+                       Email, Foto)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             id,
             escola.escolaId,
@@ -79,6 +86,12 @@ async function seedAlunos(
             dataNascimento,
             ra,
             sexo,
+            nacionalidade,
+            naturalidade,
+            endereco,
+            cidade,
+            uf,
+            cep,
             email,
             foto,
           ],
@@ -87,6 +100,7 @@ async function seedAlunos(
         criados.push({
           alunoId: id,
           nome: nomeCompleto,
+          sobrenome,
           escolaId: escola.escolaId,
         });
       }
@@ -142,4 +156,64 @@ async function seedMatriculas(db, escolas, turmasPorEscola, alunosPorTurma) {
   }
 }
 
-module.exports = { seedAlunos, seedMatriculas };
+function sexoParaParentesco(parentesco) {
+  return parentesco === Parentesco.Pai ? 'male' : 'female';
+}
+
+// De 1 a 3 responsáveis por aluno: sempre uma mãe, e opcionalmente pai/avó/tia sem repetir parentesco.
+async function seedResponsaveis(db, alunosPorTurma) {
+  console.log('* Inserindo responsáveis...');
+
+  for (const alunos of alunosPorTurma.values()) {
+    for (const aluno of alunos) {
+      const quantidade = faker.number.int({ min: 1, max: 3 });
+      const parentescos = [Parentesco.Mae];
+
+      if (quantidade > 1) {
+        parentescos.push(
+          ...faker.helpers.arrayElements(OUTROS_PARENTESCOS, quantidade - 1),
+        );
+      }
+
+      for (let indice = 0; indice < parentescos.length; indice++) {
+        const parentesco = parentescos[indice];
+        const sexoStr = sexoParaParentesco(parentesco);
+
+        const nome = `${faker.person.firstName(sexoStr)} ${aluno.sobrenome}`;
+        const ocupacao = faker.person.jobType();
+
+        const telefone =
+          Math.random() > PERCENTUAL_SEM_TELEFONE ? faker.phone.number() : null;
+
+        const emailBase = faker.internet
+          .username()
+          .toLowerCase()
+          .replace(/[^a-z0-9._-]/g, '');
+        const email =
+          Math.random() > PERCENTUAL_SEM_EMAIL
+            ? `${emailBase}.responsavel${aluno.alunoId}${indice}@example.test`
+            : null;
+
+        console.log(
+          `  - Criando responsável (parentesco ${parentesco}) do aluno ${aluno.alunoId}...`,
+        );
+
+        await db.run(
+          `INSERT INTO Responsavel (Id, AlunoId, Nome, Ocupacao, Telefone, Email, Parentesco)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [
+            faker.string.uuid(),
+            aluno.alunoId,
+            nome,
+            ocupacao,
+            telefone,
+            email,
+            parentesco,
+          ],
+        );
+      }
+    }
+  }
+}
+
+module.exports = { seedAlunos, seedMatriculas, seedResponsaveis };

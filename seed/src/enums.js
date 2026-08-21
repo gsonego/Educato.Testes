@@ -35,6 +35,8 @@ const SituacaoMatricula = {
 
 const SituacaoAnoLetivo = { Planejado: 0, Ativo: 1, Encerrado: 2 };
 
+const Parentesco = { Pai: 1, Mae: 2, Avo: 4, Tia: 6 };
+
 const TipoAvaliacao = { Indefinido: 0, Semestral: 1, Anual: 2 };
 
 const FormaAvaliacao = { Indefinido: 0, Nota: 1, Conceito: 2 };
@@ -74,6 +76,7 @@ module.exports = {
   Turno,
   SituacaoMatricula,
   SituacaoAnoLetivo,
+  Parentesco,
   TipoAvaliacao,
   FormaAvaliacao,
   TipoPeriodo,
