@@ -14,4 +14,16 @@ function loginUnico(base) {
     .replace(/[^a-z0-9._-]/g, '');
 }
 
-module.exports = { faker, EMAIL_DOMAIN_FICTICIO, loginUnico };
+function gerarEndereco() {
+  const rua = faker.location.street();
+  const numero = faker.location.buildingNumber();
+  const endereco = `${rua}, ${numero}`;
+
+  const cidade = faker.location.city();
+  const uf = faker.location.state({ abbreviated: true });
+  const cep = faker.location.zipCode('#####-###');
+
+  return { endereco, cidade, uf, cep };
+}
+
+module.exports = { faker, EMAIL_DOMAIN_FICTICIO, loginUnico, gerarEndereco };

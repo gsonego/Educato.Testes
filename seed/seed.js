@@ -17,7 +17,11 @@ const { seedModeloAvaliacao, seedDeliberacoes } = require('./src/avaliacao');
 const { seedTurmas } = require('./src/turmas');
 const { seedDisciplinas } = require('./src/disciplinas');
 const { seedTurmaDisciplinas } = require('./src/turmaDisciplinas');
-const { seedAlunos, seedMatriculas } = require('./src/alunos');
+const {
+  seedAlunos,
+  seedMatriculas,
+  seedResponsaveis,
+} = require('./src/alunos');
 const { seedAnosLetivos } = require('./src/anosLetivos');
 
 async function main() {
@@ -76,6 +80,8 @@ async function main() {
   );
 
   await seedMatriculas(db, ESCOLAS, turmasPorEscola, alunosPorTurma);
+
+  await seedResponsaveis(db, alunosPorTurma);
 
   console.log('--------------------------');
   console.log('*** Banco de dados de testes pronto!');
