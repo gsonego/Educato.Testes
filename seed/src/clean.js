@@ -3,7 +3,7 @@ const TABELAS = [
   '@usuario_push_token',
   '@relatoproblema',
   '@refreshtoken',
-  '@redefinirsenha',
+  '@codigoverificacao',
   '@mensagemcontato',
   '@notificacao',
   'presencadiaria',
