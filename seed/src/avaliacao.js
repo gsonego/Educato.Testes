@@ -46,7 +46,7 @@ async function seedModeloAvaliacao(db, escolas) {
     const id = faker.string.uuid();
 
     await db.run(
-      `INSERT INTO ModeloAvaliacao (Id, EscolaId, Nome, Descricao, Inativo, DataHoraCriacao)
+      `INSERT INTO ModeloAvaliacao (Id, EscolaId, Nome, Descricao, Inativo, DataCriacao)
        VALUES (?, ?, ?, ?, 0, UTC_TIMESTAMP())`,
       [
         id,
