@@ -6,6 +6,7 @@ const TABELAS = [
   '@codigoverificacao',
   '@mensagemcontato',
   '@notificacao',
+  'faltamodulomatricula',
   'presencadiaria',
   'registropresenca',
   'registrodiario',
