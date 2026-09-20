@@ -65,3 +65,7 @@ inventar esses comandos.
   ou expor seu conteúdo.
 - Secrets usados pelo workflow do GitHub Actions: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`,
   `DB_NAME`.
+
+## Educato.Docs
+
+Mudança em regra de negócio ou decisão relevante de produto/arquitetura → sinalizar atualização correspondente em `Educato.Docs/base-conhecimento/`, em linguagem acessível/não técnica (sem nomes de classe, endpoint ou código — ver convenção em `E:\Progs\Educato\CLAUDE.md`).
