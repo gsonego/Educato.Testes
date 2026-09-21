@@ -37,6 +37,10 @@ async function seedAlunos(db, escolas, turmasPorEscola) {
       });
       const criados = [];
 
+      console.log(
+        `  - Criando alunos para a turma ${turma.sigla} da escola ${escola.nomeFantasia}...`,
+      );
+
       for (let j = 0; j < quantidade; j++) {
         const id = alunoId++;
 
@@ -46,10 +50,6 @@ async function seedAlunos(db, escolas, turmasPorEscola) {
         ]);
 
         const sexoStr = sexo === Sexo.Masculino ? 'male' : 'female';
-
-        console.log(
-          `  - Criando aluno ${id} (${sexoStr}) para a turma ${turma.sigla} da escola ${escola.nomeFantasia}...`,
-        );
 
         const nome = faker.person.firstName(sexoStr);
         const sobrenome = faker.person.lastName(sexoStr);
@@ -183,6 +183,8 @@ async function seedResponsaveis(db, alunosPorTurma) {
         );
       }
 
+      console.log(`  - Criando responsáveis para o aluno ${aluno.alunoId}...`);
+
       for (let indice = 0; indice < parentescos.length; indice++) {
         const parentesco = parentescos[indice];
         const sexoStr = sexoParaParentesco(parentesco);
@@ -201,10 +203,6 @@ async function seedResponsaveis(db, alunosPorTurma) {
           Math.random() > PERCENTUAL_SEM_EMAIL
             ? `${emailBase}.responsavel${aluno.alunoId}${indice}@example.test`
             : null;
-
-        console.log(
-          `  - Criando responsável (parentesco ${parentesco}) do aluno ${aluno.alunoId}...`,
-        );
 
         await db.run(
           `INSERT INTO Responsavel (Id, AlunoId, Nome, Ocupacao, Telefone, Email, Parentesco)
