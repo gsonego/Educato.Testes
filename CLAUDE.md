@@ -20,7 +20,9 @@ Todos os comandos rodam a partir da pasta `seed/`:
 cd seed
 cp .env.example .env   # preencher com credenciais do banco de TESTES (nunca produção)
 npm install
-npm run seed           # executa node seed.js
+npm run seed           # fase 1: limpa e popula o banco (node seed.js)
+npm run seed:tarjetas  # fase 2: gera tarjetas via API (node seed-tarjetas.js)
+npm run seed:notas     # fase 3: preenche notas/faltas via API (node seed-notas.js)
 ```
 
 Não há lint, formatter, build ou testes automatizados configurados neste repositório — não
@@ -28,13 +30,18 @@ inventar esses comandos.
 
 ## Arquitetura
 
-- **`seed/seed.js`** — ponto de entrada único. Chama `limparBanco` e depois uma sequência fixa de
-  funções `seedX` de `seed/src/*.js`, repassando adiante os retornos (geralmente `Map`s indexados
-  por `escolaId`/`turmaId`) como argumentos das etapas seguintes (ex.: `seedTurmas` depende de
-  `anosEscolaresPorEscola`, `locaisPorEscola`, etc. produzidos por etapas anteriores). Essa ordem é
-  ditada pelas foreign keys do banco — novas etapas de seed precisam ser inseridas na posição certa
-  dentro de `main()`.
-- **`seed/src/db.js`** — wrapper fino sobre um pool `mysql2/promise`, expondo `run(sql, params)` e
+- **`seed/seed.js`** — entry point da fase 1 (somente o banco). Chama `limparBanco` e depois uma
+  sequência fixa de funções `seedX` de `seed/src/*.js`, repassando adiante os retornos (geralmente
+  `Map`s indexados por `escolaId`/`turmaId`) como argumentos das etapas seguintes (ex.: `seedTurmas`
+  depende de `anosEscolaresPorEscola`, `locaisPorEscola`, etc. produzidos por etapas anteriores).
+  Essa ordem é ditada pelas foreign keys do banco — novas etapas de seed precisam ser inseridas na
+  posição certa dentro de `main()`.
+- **`seed/seed-tarjetas.js`** e **`seed/seed-notas.js`** — entry points das fases 2 e 3 (jobs de
+  API do workflow, que rodam depois do banco seedado). `tarjetas.js`/`notas.js` decidem o que fazer
+  via `CURSO_TEMPLATES`/`ESCOLAS` de `config.js` (única fonte da regra) e resolvem os IDs concretos
+  no banco com `consulta` — a regra não deve ser repetida num `WHERE` dessas etapas (evita drift).
+- **`seed/src/db.js`** — wrapper fino sobre um pool `mysql2/promise`, expondo `run(sql, params)`,
+  `consulta(sql, params)` (devolve as linhas; usado pelos jobs de API para ler o banco já seedado) e
   `close()`. Sempre parametrizado; nunca interpolar valores direto na query.
 - **`seed/src/config.js`** — dados do cenário fixo: array `ESCOLAS` (as 3 escolas com seus
   `usuarios` aninhados), `CURSO_TEMPLATES`, `DISCIPLINAS_BASE`, pools de fotos fictícias. É este o
