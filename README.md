@@ -1,22 +1,26 @@
 # Educato.Testes
 
-Repositório de testes integrados do Educato. Roda semanalmente (e sob demanda) para validar
-funcionalidades importantes do sistema contra um banco de dados de testes sempre limpo.
+Repositório de testes integrados do Educato. Roda semanalmente, a cada PR para `main` e sob demanda
+para validar funcionalidades importantes do sistema contra um banco de dados de testes sempre limpo.
 
 ## Seed do banco de dados
 
 A pasta [`seed/`](./seed) contém um script Node.js que limpa e popula o banco de dados de testes
-com um cenário fixo de 2 escolas:
+com um cenário fixo de 3 escolas:
 
-- **Escola Alfa** (plano Gratuito): cursos de Educação Infantil e Ensino Fundamental 1.
-- **Colégio Beta** (plano Pro): cursos de Educação Infantil, Ensino Fundamental 1 e Ensino Fundamental 2,
+- **Escola Alfa** (plano Pro): cursos de Educação Infantil, Ensino Fundamental 1 e Ensino Fundamental 2,
   além de modelo de avaliação conceitual.
+- **Educato Beta** (plano Gratuito): cursos de Educação Infantil e Ensino Fundamental 1.
+- **Educato Gama** (sem dados): caso-limite para validar que o seed não quebra com escola vazia.
 
 Nomes de pessoas são gerados aleatoriamente (via [`@faker-js/faker`](https://fakerjs.dev/), locale
 `pt_BR`, com seed fixo para reprodutibilidade). Todos os e-mails usam o domínio `example.test`
 (reservado pela RFC 2606), portanto nunca são endereços reais.
 
-Tarjetas, grade horária e tabelas de anexos/relatos ficam fora do escopo deste seed.
+As tarjetas são geradas **pela própria API de testes** (`POST /Modulos/Ano/{ano}/Tarjetas`), depois
+que o cenário é populado — nunca replicando a lógica de geração no seed. Sem `API_BASE_URL`
+configurada, a geração é pulada (tabelas `Tarjeta`/`TarjetaMatricula` ficam vazias). Grade horária e
+tabelas de anexos/relatos continuam fora do escopo deste seed.
 
 ### Rodando localmente
 
@@ -39,8 +43,15 @@ logins (ex.: `adm.alfa`, `professor1.beta`, `secretaria.beta`, etc.).
 
 [`.github/workflows/seed-database.yml`](./.github/workflows/seed-database.yml) executa o seed:
 
-- Sob demanda (`workflow_dispatch`)
+- A cada **PR para `main`** que altere `seed/**` ou o próprio workflow (valida o branch antes de mesclar)
+- **Sob demanda** (`workflow_dispatch`), podendo escolher qualquer branch e informar `API_BASE_URL`
 - Automaticamente todo domingo às 03:00 UTC
 
 As credenciais do banco de testes ficam armazenadas como _secrets_ do repositório:
 `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`.
+
+Para validar um branch **antes** de abrir o PR, rode o seed sob demanda (Actions → "Seed do banco de
+dados de testes" → **Run workflow**) e selecione o branch desejado. Para também gerar as tarjetas via
+API, preencha o campo `API_BASE_URL` no dispatch (ou configure o secret `API_BASE_URL`, que vale para
+os disparos automáticos de PR/agendamento). A API de testes precisa estar conectada ao mesmo banco
+que o seed alimenta — caso contrário o login falha e o seed aponta o erro.

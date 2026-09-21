@@ -1,10 +1,26 @@
 name: Seed do banco de dados de testes
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      api_base_url:
+        description: 'URL base da API de testes (ex.: https://seu-servidor/educato/teste/api). Deixe vazio para pular a geração de tarjetas.'
+        required: false
+        type: string
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'seed/**'
+      - '.github/workflows/seed-database.yml'
   schedule:
     # Todo domingo às 03:00 UTC (00:00 no horário de Brasília)
     - cron: '0 3 * * 0'
+
+# Evita dois seeds sobrescrevendo o banco ao mesmo tempo (agendamento + PRs + manual).
+concurrency:
+  group: seed-database
+  cancel-in-progress: false
 
 jobs:
   seed-database:
@@ -32,4 +48,5 @@ jobs:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
+          API_BASE_URL: ${{ inputs.api_base_url || secrets.API_BASE_URL }}
         run: node seed.js
