@@ -25,7 +25,7 @@ concurrency:
 jobs:
   # Etapa 1: limpa e popula o banco de testes (cenário fixo de escolas/turmas/alunos).
   seed-database:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v5
@@ -54,7 +54,7 @@ jobs:
   # Etapa 2: gera a malha de tarjetas via API de testes (exige o banco seedado).
   gerar-tarjetas:
     needs: seed-database
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v5
@@ -86,7 +86,7 @@ jobs:
   # Etapa 3: preenche notas/faltas via API (exige tarjetas geradas: sem tarjetas, sem nota).
   preencher-notas:
     needs: gerar-tarjetas
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v5
