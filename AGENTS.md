@@ -1,6 +1,10 @@
-# CLAUDE.md
+## Response style
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+- Keep responses concise.
+- Do not explain routine changes.
+- Do not summarize every file modified.
+- When a task is completed, respond with at most 5 bullet points.
+- Only provide detailed explanations when explicitly requested.
 
 ## O que é este repositório
 
