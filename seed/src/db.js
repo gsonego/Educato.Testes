@@ -17,8 +17,14 @@ async function run(sql, params = []) {
   await pool.execute(sql, params);
 }
 
+// Idem, mas devolve as linhas retornadas (usado pelos jobs de tarjetas/notas, que leem o banco já seedado).
+async function consulta(sql, params = []) {
+  const [linhas] = await pool.execute(sql, params);
+  return linhas;
+}
+
 async function close() {
   await pool.end();
 }
 
-module.exports = { run, close };
+module.exports = { run, consulta, close };

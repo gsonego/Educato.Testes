@@ -5,7 +5,9 @@
   "private": true,
   "main": "seed.js",
   "scripts": {
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "seed:tarjetas": "node seed-tarjetas.js",
+    "seed:notas": "node seed-notas.js"
   },
   "dependencies": {
     "@faker-js/faker": "^9.7.0",

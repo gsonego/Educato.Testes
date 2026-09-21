@@ -23,8 +23,6 @@ const {
   seedResponsaveis,
 } = require('./src/alunos');
 const { seedAnosLetivos } = require('./src/anosLetivos');
-const { seedTarjetasViaApi } = require('./src/tarjetas');
-const { seedNotasViaApi } = require('./src/notas');
 
 async function main() {
   console.log('--------------------------');
@@ -89,17 +87,6 @@ async function main() {
   );
 
   await seedResponsaveis(db, alunosPorTurma);
-
-  await seedTarjetasViaApi(ESCOLAS, usuariosPorEscola);
-
-  await seedNotasViaApi(
-    ESCOLAS,
-    turmasPorEscola,
-    disciplinasPorEscola,
-    modulosPorEscola,
-    matriculasPorTurma,
-    usuariosPorEscola,
-  );
 
   console.log('--------------------------');
   console.log('*** Banco de dados de testes pronto!');
