@@ -16,15 +16,11 @@ async function chamarApi(caminho, { metodo = 'GET', corpo, token } = {}) {
     body: corpo ? JSON.stringify(corpo) : undefined,
   });
 
-  if (resposta.status === 204) {
-    return null;
-  }
-
-  const texto = (await resposta.text()).slice(0, 500);
+  const texto = await resposta.text();
 
   if (!resposta.ok) {
     throw new Error(
-      `API ${metodo} ${caminho} respondeu ${resposta.status}: ${texto}`,
+      `API ${metodo} ${caminho} respondeu ${resposta.status}: ${texto.slice(0, 500)}`,
     );
   }
 
