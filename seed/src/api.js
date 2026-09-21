@@ -6,8 +6,22 @@ function temApiConfigurada() {
 
 // Client HTTP mínimo para chamar a API de testes (fetch global do Node 20).
 // Nunca logar tokens ou credenciais aqui.
+async function requisicao(url, opcoes, tentativa = 0) {
+  const resposta = await fetch(url, { ...opcoes, redirect: 'manual' });
+
+  const status = resposta.status;
+  if (status >= 300 && status < 400 && resposta.headers.get('location') && tentativa < 3) {
+    // Preserva método e corpo no redirect (o fetch padrão converteria POST em GET em 301/302).
+    await resposta.body?.cancel();
+    const destino = new URL(resposta.headers.get('location'), url).toString();
+    return requisicao(destino, opcoes, tentativa + 1);
+  }
+
+  return resposta;
+}
+
 async function chamarApi(caminho, { metodo = 'GET', corpo, token } = {}) {
-  const resposta = await fetch(`${API_BASE_URL}${caminho}`, {
+  const resposta = await requisicao(`${API_BASE_URL}${caminho}`, {
     method: metodo,
     headers: {
       'Content-Type': 'application/json',
