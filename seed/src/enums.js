@@ -49,6 +49,8 @@ const ModoControlePresenca = {
   PresencaPorAula: 2,
 };
 
+const OrigemFaltas = { Digitacao: 0, Frequencia: 1 };
+
 const EmissaoHistorico = { Nao: 0, Sim: 1, Opcional: 2 };
 
 const DiaSemana = {
@@ -81,6 +83,7 @@ module.exports = {
   FormaAvaliacao,
   TipoPeriodo,
   ModoControlePresenca,
+  OrigemFaltas,
   EmissaoHistorico,
   DiaSemana,
   DIAS_UTEIS,

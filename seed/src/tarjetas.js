@@ -48,4 +48,4 @@ async function seedTarjetasViaApi(escolas, usuariosPorEscola) {
   }
 }
 
-module.exports = { seedTarjetasViaApi };
+module.exports = { seedTarjetasViaApi, PERFIS_AUTORIZADOS };

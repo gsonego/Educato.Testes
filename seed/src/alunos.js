@@ -122,19 +122,21 @@ async function seedMatriculas(db, escolas, turmasPorEscola, alunosPorTurma) {
   console.log('* Inserindo matrículas...');
 
   const dataMatricula = `${ANO_LETIVO_ATUAL}-02-01`;
+  const matriculasPorTurma = new Map();
 
   for (const escola of escolas) {
     const turmas = turmasPorEscola.get(escola.escolaId) ?? [];
 
     for (const turma of turmas) {
       const alunos = alunosPorTurma.get(turma.id) ?? [];
+      const registros = [];
 
       for (let numero = 1; numero <= alunos.length; numero++) {
         const aluno = alunos[numero - 1];
         const id = faker.string.uuid();
 
-        const situacaoMatricula =
-          Math.random() > PERCENTUAL_TRANSFERIDOS ? 1 : 2;
+        const ativa = Math.random() > PERCENTUAL_TRANSFERIDOS;
+        const situacaoMatricula = ativa ? 1 : 2;
 
         await db.run(
           `INSERT INTO Matricula (Id, TurmaId, AlunoId, Numero, DataMatricula, Situacao, DataSituacao)
@@ -151,9 +153,15 @@ async function seedMatriculas(db, escolas, turmasPorEscola, alunosPorTurma) {
             dataMatricula,
           ],
         );
+
+        registros.push({ alunoId: aluno.alunoId, ativo: ativa });
       }
+
+      matriculasPorTurma.set(turma.id, registros);
     }
   }
+
+  return matriculasPorTurma;
 }
 
 function sexoParaParentesco(parentesco) {

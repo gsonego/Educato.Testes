@@ -36,7 +36,7 @@ async function seedCursos(db, escolas) {
           template.qtdeSemanas || 40,
           template.emissaoHistorico || EmissaoHistorico.Sim,
           template.duracaoAula || 45,
-          template.modoControlePresenca || ModoControlePresenca.PresencaDiaria,
+          template.modoControlePresenca || ModoControlePresenca.PresencaPorAula,
           ordem,
         ],
       );
@@ -88,6 +88,7 @@ async function seedAnosEscolares(db, cursosPorEscola) {
           sigla: ano.sigla,
           titulo: ano.titulo,
           formaAvaliacao: ano.formaAvaliacao || FormaAvaliacao.Nota,
+          preencherNotaFalta: ano.preencherNotaFalta || false,
           cursoId: curso.id,
           cursoSigla: curso.sigla,
           escolaId,
