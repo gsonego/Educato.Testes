@@ -79,6 +79,8 @@ async function seedTurmas(
         sigla,
         anoEscolarId: anoEscolar.id,
         escolaId: escola.escolaId,
+        formaAvaliacao,
+        preencherNotaFalta: anoEscolar.preencherNotaFalta || false,
       });
     }
 

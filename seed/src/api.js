@@ -57,4 +57,12 @@ async function gerarTarjetasDoAno(ano, token) {
   });
 }
 
-module.exports = { temApiConfigurada, login, gerarTarjetasDoAno };
+async function registrarNotas(body, token) {
+  return chamarApi('/Turmas/Notas', {
+    metodo: 'POST',
+    corpo: body,
+    token,
+  });
+}
+
+module.exports = { temApiConfigurada, login, gerarTarjetasDoAno, registrarNotas };

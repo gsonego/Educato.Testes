@@ -2,6 +2,7 @@ const {
   EmissaoHistorico,
   FormaAvaliacao,
   ModoControlePresenca,
+  OrigemFaltas,
   Perfil,
   PlanoEscola,
 } = require('./enums');
@@ -59,7 +60,12 @@ const CURSO_TEMPLATES = {
     titulo: 'Ensino Fundamental 2',
     anos: [
       { sigla: '6EF', titulo: '6º Ano', aulasSemanais: 30 },
-      { sigla: '7EF', titulo: '7º Ano', aulasSemanais: 30 },
+      {
+        sigla: '7EF',
+        titulo: '7º Ano',
+        aulasSemanais: 30,
+        preencherNotaFalta: true,
+      },
       { sigla: '8EF', titulo: '8º Ano', aulasSemanais: 30 },
       { sigla: '9EF', titulo: '9º Ano', aulasSemanais: 30 },
     ],
@@ -141,6 +147,7 @@ const ESCOLAS = [
     numDeliberacoes: 20,
     qtdeAnosLetivos: 4,
     comModeloAvaliacao: true,
+    origemFaltas: OrigemFaltas.Digitacao,
     usuarios: [
       {
         perfil: Perfil.Administracao,
@@ -205,6 +212,7 @@ const ESCOLAS = [
     numDeliberacoes: 10,
     qtdeAnosLetivos: 2,
     comModeloAvaliacao: false,
+    origemFaltas: OrigemFaltas.Digitacao,
     usuarios: [
       {
         perfil: Perfil.AdministracaoGeral,

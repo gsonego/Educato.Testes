@@ -19,8 +19,13 @@ Nomes de pessoas são gerados aleatoriamente (via [`@faker-js/faker`](https://fa
 
 As tarjetas são geradas **pela própria API de testes** (`POST /Modulos/Ano/{ano}/Tarjetas`), depois
 que o cenário é populado — nunca replicando a lógica de geração no seed. Sem `API_BASE_URL`
-configurada, a geração é pulada (tabelas `Tarjeta`/`TarjetaMatricula` ficam vazias). Grade horária e
-tabelas de anexos/relatos continuam fora do escopo deste seed.
+configurada, a geração é pulada (tabelas `Tarjeta`/`TarjetaMatricula` ficam vazias).
+
+Além da malha, o seed preenche **notas e faltas** das turmas marcadas com `preencherNotaFalta` nos
+templates de curso (`CURSO_TEMPLATES` em `seed/src/config.js`), via `POST /Turmas/Notas` — hoje
+aplicado à turma `7EFA` da escola Alfa. Faltas são digitadas apenas quando a escola opera com
+`origemFaltas = Digitacao`, e alunos transferidos não recebem nota. Grade horária e tabelas de
+anexos/relatos continuam fora do escopo deste seed.
 
 ### Rodando localmente
 
